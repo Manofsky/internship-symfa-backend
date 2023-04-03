@@ -1,0 +1,22 @@
+version: '4.17'
+
+services:
+  db:
+    container_name: postgres-symfa-final
+    image: postgres:15.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${TYPEORM_USERNAME}
+      - POSTGRES_PASSWORD=${TYPEORM_PASSWORD}
+      - POSTGRES_DB=${TYPEORM_DATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - ${TYPEORM_PORT}:${TYPEORM_PORT}
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8088:8080
+volumes:
+  pgdata:
