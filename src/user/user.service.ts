@@ -11,8 +11,8 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
 
-  createUser(user: CreateUserDto): Promise<User> {
-    return this.usersRepository.save(user);
+  createUser(date: CreateUserDto): Promise<User> {
+    return this.usersRepository.save(date);
   }
 
   getAll(): Promise<User[]> {
@@ -21,5 +21,9 @@ export class UserService {
 
   findUserById(id: number): Promise<User | null> {
     return this.usersRepository.findOneBy({ id });
+  }
+
+  findUserByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ email });
   }
 }
