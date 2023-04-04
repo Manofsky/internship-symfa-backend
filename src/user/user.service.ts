@@ -13,14 +13,12 @@ export class UserService {
     private passwordService: PasswordService,
   ) {}
 
-  async createUser(data: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async createUser(data: CreateUserDto): Promise<User> {
     const hashPassword = await this.passwordService.hashPassword(data.password);
-    const { password, ...user } = await this.usersRepository.save({
+    return this.usersRepository.save({
       ...data,
       password: hashPassword,
     });
-
-    return user;
   }
 
   getAll(): Promise<User[]> {
@@ -33,5 +31,9 @@ export class UserService {
 
   findUserByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOneBy({ email });
+  }
+
+  updateUser(user: User) {
+    return this.usersRepository.save(user);
   }
 }
