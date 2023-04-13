@@ -6,14 +6,29 @@ export class Product {
   ProductID: number;
 
   @Column()
+  ProductType: 'food' | 'drink';
+
+  @Column()
   ProductName: string;
+
+  @Column()
+  ProductWeight: string;
+
+  @Column()
+  isSpicy: boolean;
+
+  @Column()
+  isVegetarian: boolean;
 
   @Column()
   ProductDescription: string;
 
-  @Column()
+  @Column('numeric')
   UnitPrice: number;
 
   @Column()
-  ProductImage: string;
+  SmallImagePath: string;
+
+  @Column()
+  BigImagePath: string;
 }
