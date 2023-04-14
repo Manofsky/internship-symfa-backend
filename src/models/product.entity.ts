@@ -9,10 +9,10 @@ export class Product {
   ProductType: 'food' | 'drink';
 
   @Column()
-  ProductName: string;
+  ProductTitle: string;
 
   @Column()
-  ProductWeight: string;
+  ProductSubtitle: string;
 
   @Column()
   isSpicy: boolean;
@@ -23,12 +23,15 @@ export class Product {
   @Column()
   ProductDescription: string;
 
-  @Column('numeric')
+  @Column('numeric', {
+    precision: 4,
+    scale: 2,
+  })
   UnitPrice: number;
 
   @Column()
-  SmallImagePath: string;
+  SmallImage: string;
 
   @Column()
-  BigImagePath: string;
+  BigImage: string;
 }

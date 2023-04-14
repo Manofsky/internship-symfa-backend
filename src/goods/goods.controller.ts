@@ -1,9 +1,25 @@
-import { Controller, Get, Res, Param, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  Param,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { Response as ResponseType } from 'express';
+import { GoodsService } from './goods.service';
+import { Product } from '../models/product.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('goods')
+@UseGuards(JwtAuthGuard)
 export class GoodsController {
-  constructor() {}
+  constructor(private goodsService: GoodsService) {}
+
+  @Get()
+  async getAll(): Promise<Product[]> {
+    return this.goodsService.getAll();
+  }
 
   @Get('small/:imagename')
   getSmallImage(@Param('imagename') image: string, @Res() res: ResponseType) {
