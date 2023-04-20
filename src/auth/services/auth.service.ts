@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { PasswordService } from './password.service';
 import { AuthTokenDto } from '../dto/auth-token.dto';
 import { User } from 'src/models/user.entity';
+import constants from 'src/configs/constants';
 
 @Injectable()
 export class AuthService {
@@ -39,11 +40,11 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('SECRET_KEY'),
-        expiresIn: '15m',
+        expiresIn: this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN'),
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
-        expiresIn: '7d',
+        expiresIn: this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN'),
       }),
     ]);
 
@@ -63,12 +64,15 @@ export class AuthService {
 
   storeTokenInCookie(res: ResponseType, authToken: AuthTokenDto): void {
     res.cookie('access_token', authToken.accessToken, {
-      maxAge: 1000 * 60 * 15,
+      maxAge: constants.maxAgeAccessTokenInCookie,
       httpOnly: true,
     });
     res.cookie('refresh_token', authToken.refreshToken, {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: constants.maxAgeRefreshTokenInCookie,
       httpOnly: true,
+    });
+    res.cookie('logged_in', true, {
+      maxAge: constants.maxAgeAccessTokenInCookie,
     });
   }
 

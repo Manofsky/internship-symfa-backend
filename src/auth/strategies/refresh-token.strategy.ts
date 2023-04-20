@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request as RequestType } from 'express';
 
@@ -30,6 +30,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (req.cookies && 'refresh_token' in req.cookies) {
       return req.cookies.refresh_token;
     }
-    return null;
+    throw new ForbiddenException('Could not refresh access token');
   }
 }

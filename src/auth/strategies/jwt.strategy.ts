@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request as RequestType } from 'express';
 
@@ -25,6 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (req.cookies && 'access_token' in req.cookies) {
       return req.cookies.access_token;
     }
-    return null;
+    throw new UnauthorizedException('You are not logged in');
   }
 }

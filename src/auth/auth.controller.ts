@@ -24,7 +24,7 @@ export class AuthController {
   @Get('refresh')
   async refreshTokens(
     @Req() req: RequestType,
-    @Res({ passthrough: true }) res: ResponseType,
+    @Res() res: ResponseType,
   ): Promise<void> {
     const newAuthToken = await this.authService.refreshAccessToken(req.user);
     this.authService.storeTokenInCookie(res, newAuthToken);

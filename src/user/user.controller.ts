@@ -1,7 +1,16 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../models/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -17,8 +26,14 @@ export class UserController {
     return this.userService.getAll();
   }
 
-  @Get(':id')
-  async findUserById(@Param('id') id: number): Promise<User | null> {
-    return this.userService.findUserById(id);
+  @UseGuards(JwtAuthGuard)
+  @Get(':email')
+  async getUserByEmail(
+    @Param('email') email: string,
+  ): Promise<Omit<User, 'password' | 'refreshToken'>> {
+    const user = await this.userService.findUserByEmail(email);
+    if (!user) throw new NotFoundException();
+    const { password, refreshToken, ...rest } = user;
+    return rest;
   }
 }
