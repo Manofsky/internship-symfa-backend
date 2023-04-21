@@ -13,9 +13,9 @@ export class UserService {
     private passwordService: PasswordService,
   ) {}
 
-  async createUser(data: CreateUserDto): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<void> {
     const hashPassword = await this.passwordService.hashPassword(data.password);
-    return this.usersRepository.save({
+    this.usersRepository.save({
       ...data,
       password: hashPassword,
     });
@@ -31,6 +31,10 @@ export class UserService {
 
   findUserByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOneBy({ email });
+  }
+
+  findUserByRefreshToken(refreshToken: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ refreshToken });
   }
 
   updateUser(user: User) {

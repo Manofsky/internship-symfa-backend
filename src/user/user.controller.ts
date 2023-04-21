@@ -3,9 +3,11 @@ import {
   Controller,
   Get,
   NotFoundException,
-  Param,
   Post,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { Response as ResponseType, Request as RequestType } from 'express';
 import { UserService } from './user.service';
 import { User } from '../models/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,8 +19,12 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post('register')
-  async create(@Body() data: CreateUserDto) {
-    return this.userService.createUser(data);
+  async create(
+    @Body() data: CreateUserDto,
+    @Res({ passthrough: true }) res: ResponseType,
+  ): Promise<void> {
+    this.userService.createUser(data);
+    res.status(200).send({ message: 'ok' });
   }
 
   @Get()
@@ -27,11 +33,13 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':email')
-  async getUserByEmail(
-    @Param('email') email: string,
-  ): Promise<Omit<User, 'password' | 'refreshToken'>> {
-    const user = await this.userService.findUserByEmail(email);
+  @Get('me')
+  async getUserByRefreshToken(
+    @Req() req: RequestType,
+  ): Promise<Omit<User, 'password' | 'refreshToken'> | null> {
+    const user = await this.userService.findUserByRefreshToken(
+      req.cookies?.refresh_token,
+    );
     if (!user) throw new NotFoundException();
     const { password, refreshToken, ...rest } = user;
     return rest;
